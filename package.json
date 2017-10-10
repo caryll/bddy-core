@@ -1,6 +1,6 @@
 {
 	"name": "bddy-core",
-	"version": "0.5.0",
+	"version": "0.5.1",
 	"description": "First class, Secondary category, Unrestricted building system.",
 	"main": "index.js",
 	"scripts": {
@@ -11,7 +11,7 @@
 		"url": "git+https://github.com/caryll/bddy.git"
 	},
 	"author": "Belleve Invis",
-	"license": "Apache 2.0",
+	"license": "Apache-2.0",
 	"bugs": {
 		"url": "https://github.com/caryll/bddy-core/issues"
 	},
@@ -21,7 +21,6 @@
 		"colors": "^1.1.2",
 		"fs-extra": "^3.0.1",
 		"micromatch": "^3.1.0",
-		"pretty-error": "^2.1.1",
 		"throat": "^3.0.0"
 	}
 }
