@@ -1,17 +1,17 @@
-const engine = require("./lib/engine");
+const Context = require("./lib/rootctx");
 const { file, present, anyfile } = require("./lib/targets/file");
 const { virt, anyvirt } = require("./lib/targets/virtual");
 
-const any = {
+const aConfig = {
 	file: anyfile,
 	virt: anyvirt
 };
 
+const theConfig = { file, virt };
+
 exports._bddy = function() {
-	return new engine.Context();
+	return new Context();
 };
-exports.file = file;
-exports.virt = virt;
 
 class BuildFunctionSet {
 	constructor(context, coTFn, args) {
@@ -22,8 +22,11 @@ class BuildFunctionSet {
 	def(f) {
 		return this.context.def(this.coTFn(...this.args), f);
 	}
+	from(f) {
+		return this.def(f);
+	}
 	alsodir() {
-		new BuildFunctionSet(this.context, any.file, [
+		new BuildFunctionSet(this.context, aConfig.file, [
 			this.args[0].replace(/[/\\][^/\\]+$/, "")
 		]).def(this.context.ensureDir);
 		return this;
@@ -40,17 +43,23 @@ const FileOps = require("./lib/plugins/fileops");
 
 exports.bddy = function(defs, argv, _options) {
 	const options = Object.assign({}, _options);
-	const r = new engine.Context();
+	const r = new Context();
 	r.loadDefinitions(existingFile);
 	r.loadPlugin({ verda: new Verda(options) });
 	r.loadPlugin({ command: new Command(), dir: new Dir(), fileops: new FileOps() });
-	const forany = {};
-	for (let type in any) {
-		forany[type] = BuildEntryT(r, any[type]);
+
+	const a = {};
+	for (let type in aConfig) {
+		a[type] = BuildEntryT(r, aConfig[type]);
+	}
+
+	const the = {};
+	for (let type in theConfig) {
+		the[type] = theConfig[type];
 	}
 
 	if (defs) {
-		defs.call(r, r, forany, argv, exports);
+		defs.call(r, r, a, the, argv, exports);
 	}
 	return r;
 };
