@@ -1,13 +1,7 @@
+"use strict";
+
 const Context = require("./lib/rootctx");
-const { file, present, anyfile } = require("./lib/targets/file");
-const { virt, anyvirt } = require("./lib/targets/virtual");
-
-const aConfig = {
-	file: anyfile,
-	virt: anyvirt
-};
-
-const theConfig = { file, virt };
+const { A, The } = require("./athe");
 
 exports._bddy = function() {
 	return new Context();
@@ -38,25 +32,26 @@ const BuildEntryT = (ctx, coTFn) => (...args) => new BuildFunctionSet(ctx, coTFn
 const existingFile = require("./lib/predefs/existingFile");
 const Verda = require("./lib/plugins/verda");
 const Command = require("./lib/plugins/command");
+const VCall = require("./lib/plugins/vcall");
 const Dir = require("./lib/plugins/dir");
 const FileOps = require("./lib/plugins/fileops");
 
 exports.bddy = function(defs, argv, _options) {
 	const options = Object.assign({}, _options);
 	const r = new Context();
+	r.resources.options = Object.assign({}, r.resources.options, options);
+
 	r.loadDefinitions(existingFile);
 	r.loadPlugin({ verda: new Verda(options) });
-	r.loadPlugin({ command: new Command(), dir: new Dir(), fileops: new FileOps() });
+	r.loadPlugin({
+		command: new Command(),
+		dir: new Dir(),
+		fileops: new FileOps(),
+		vcall: new VCall()
+	});
 
-	const a = {};
-	for (let type in aConfig) {
-		a[type] = BuildEntryT(r, aConfig[type]);
-	}
-
-	const the = {};
-	for (let type in theConfig) {
-		the[type] = theConfig[type];
-	}
+	const a = A(CoTarget => BuildEntryT(r, CoTarget));
+	const the = The(Target => Target);
 
 	if (defs) {
 		defs.call(r, r, a, the, argv, exports);
