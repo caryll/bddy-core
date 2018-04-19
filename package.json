@@ -1,6 +1,6 @@
 {
 	"name": "bddy-core",
-	"version": "0.10.2",
+	"version": "0.10.3",
 	"description": "First class, Secondary category, Unrestricted building system.",
 	"main": "index.js",
 	"scripts": {
